@@ -1,34 +1,40 @@
 require('dotenv').config();
 
 const axios = require('axios');
+const requestURL = 'https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create'
 
-
-
-
-const create_oauth = async (billerID,amount,ppID,token,authType,UID) =>
+async function createQR(billerID,amount,token,authType,UID,ownerID)
 {
     const headers = {
         headers:{
             'Content-Type': 'application/json',
             'authorization':`${authType} ${token}`,
             'requestUID':`${UID}`,
-            
+            'resourceOwnerId':`${ownerID}`
         },
     }
 
     const body ={
-        "qrType" :"PP",
-        "amount":`${amount}`,
-         "ppType": "BILLERID",
-        "ppId": "889097429042018",
-         "ref1": "REFERENCE1",
-         "ref2": "REFERENCE2",
-         "ref3": "SCB"
+        "qrType": "PP",
+      "ppType": "BILLERID",
+      "ppId": `${billerID}`,
+      "amount": `${amount}`,
+      "ref1": "REFERENCE1",
+      "ref2": "REFERENCE2",
+      "ref3": "SCB"
     }
-    const {data} = await axios.post('https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token',body,headers)
+
+    try{
+    const {data} = await axios.post(requestURL,body,headers)
    return data;
+    }
+    catch(err)
+    {
+        throw err;
+
+    }
 }
 
 
-module.exports = create_oauth;
+module.exports = createQR;
 
